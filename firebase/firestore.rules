@@ -1,0 +1,23 @@
+rules_version = '2';
+
+// WasteGuide AI — Firestore security rules
+//
+// The Flask backend uses the Firebase Admin SDK (a service account), which
+// bypasses these rules entirely. These rules only govern direct client-side
+// access, which this project does not use by default — they're included so
+// the database isn't left wide open if client SDK access is ever added.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /history/{docId} {
+      allow read: if false;   // reads go through the backend API only
+      allow write: if false;  // writes go through the backend API only
+    }
+
+    match /centers/{docId} {
+      allow read: if false;   // reads go through the backend API only
+      allow write: if false;  // writes go through the backend API only
+    }
+  }
+}
