@@ -11,7 +11,7 @@ import json
 import requests
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 VALID_CATEGORIES = [
@@ -65,20 +65,21 @@ def classify_waste_item(item_name: str) -> dict:
     payload = {
         "model": GROQ_MODEL,
         "temperature": 0.2,
+        "max_completion_tokens": 2000,
+        "reasoning_effort": "low",
         "response_format": {"type": "json_object"},
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": f"Classify this waste item: {item_name}"},
         ],
     }
-
     headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",
         "Content-Type": "application/json",
     }
 
     try:
-        response = requests.post(GROQ_URL, headers=headers, json=payload, timeout=20)
+        response = requests.post(GROQ_URL, headers=headers, json=payload, timeout=30)
     except requests.exceptions.Timeout:
         raise GroqServiceError("The AI service timed out. Please try again.")
     except requests.exceptions.ConnectionError:
