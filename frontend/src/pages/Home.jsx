@@ -12,9 +12,14 @@ const TIPS = [
 ]
 
 export default function Home() {
-  const { history, remove } = useHistory()
-  const [lastScanned, setLastScanned] = useState(null)
+const { history, remove } = useHistory()
+const [lastScanned, setLastScanned] = useState(null)
+const [refreshKey, setRefreshKey] = useState(0)
 
+const handleScanned = (result) => {
+  setLastScanned(result)
+  setRefreshKey((k) => k + 1)
+}
   return (
     <div>
       {/* Hero */}
@@ -28,7 +33,7 @@ export default function Home() {
         </p>
 
         <div className="mt-8 max-w-2xl">
-          <WasteScanner onScanned={setLastScanned} />
+          <WasteScanner onScanned={handleScanned} />
         </div>
       </section>
 
@@ -44,7 +49,7 @@ export default function Home() {
       <section className="mx-auto max-w-6xl px-5 sm:px-8 py-8 grid lg:grid-cols-5 gap-8">
         <div className="lg:col-span-2">
           <h2 className="font-display text-lg font-semibold text-ink dark:text-paper mb-4">Quick statistics</h2>
-          <QuickStats />
+          <QuickStats key={refreshKey} />
         </div>
 
         <div className="lg:col-span-3">
